@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 module Enumerable
-  # parent block method is the #each
-  # num_arr = Array(1..9)
-  # num_arr.each { |x| puts x.to_s }
   def my_each(arr)
     x = 0
     while x < arr.length
@@ -83,7 +80,7 @@ module Enumerable
   def my_inject(arr, results)
     i = 0
     while i < arr.length
-      # variable reassignments => results
+
       results = yield(results, arr[i])
       i += 1
     end
