@@ -24,7 +24,8 @@ In this project, you will implement Enumerable module that gets mixed into the A
 
 1. Each method has a commented test case below the file
 2. To run a function just uncomment the test case in question
-3. Then run the command `ruby enumerable.rb`
+3. Then run the command `ruby test.rb`
+4. Each function has a number of test cases under its name in the test file
 
 ## License
 
