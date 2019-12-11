@@ -5,8 +5,9 @@ module Enumerable
   def my_each
     return to_enum(:my_each) unless block_given?
 
+    array = is_a?(Range) ? to_a : self
     x = 0
-    while x < length
+    while x < array.length
       yield(self[x])
       x += 1
     end
@@ -15,8 +16,9 @@ module Enumerable
   def my_each_with_index
     return to_enum(:my_each_with_index) unless block_given?
 
+    array = is_a?(Range) ? to_a : self
     i = 0
-    while i < length
+    while i < array.length
       yield(self[i], i)
       i += 1
     end
@@ -40,52 +42,47 @@ module Enumerable
     true
   end
 
-  def my_all?(_arg = nil)
+  def my_all?(arg = nil)
     if block_given?
-      w = 0
-      while w < length
-        return false unless yield(self[w])
-
-        w += 1
-      end
-      return true
-    end
-    my_each do |x|
-      return false if my_checker(x) == false
+      my_each { |x| return false unless yield(x) }
+    elsif arg.class == Class
+      my_each { |x| return false unless x.is_a? arg }
+    elsif arg.class == Regexp
+      my_each { |x| return false unless x.match? arg }
+    elsif !arg.nil?
+      my_each { |x| return false unless x == arg }
+    else
+      my_each { |x| return false unless x }
     end
     true
   end
 
-  def my_any?(_arg = nil)
+  def my_any?(arg = nil)
     if block_given?
-      i = 0
-      while i < length
-        return true if yield(self[i])
-
-        i += 1
-      end
-      return false
+      my_each { |w| return true if yield(w) }
+    elsif arg.class == Class
+      my_each { |w| return true if w.is_a? arg }
+    elsif arg.class == Regexp
+      my_each { |w| return true if w.match? arg }
+    elsif !arg.nil?
+      my_each { |w| return true if w == arg }
     else
-      (0...length).each do |x|
-        return true if !self[x].nil? && self[x] != false
-      end
+      my_each { |w| return true if w }
     end
     false
   end
 
-  def my_none?(_arg = nil)
+  def my_none?(arg = nil)
     if block_given?
-      i = 0
-      while i < length
-        return false if yield(self[i])
-
-        i += 1
-      end
-      return true
+      my_each { |w| return false if yield(w) }
+    elsif arg.class == Class
+      my_each { |w| return false if w.is_a? arg }
+    elsif arg.class == Regexp
+      my_each { |w| return false if w.match? arg }
+    elsif !arg.nil?
+      my_each { |w| return false if w == arg}
     else
-      (0...length).each do |x|
-        return false if self[x] != false && !self[x].nil?
-      end
+      my_each { |w| return false if w }
     end
     true
   end
@@ -93,7 +90,7 @@ module Enumerable
   def my_count(arg = nil)
     unless arg.nil?
       count = 0
-      my_each { |value| count += value == arg ? 1 : 0 }
+      my_each { |i| count += 1 if arg == i }
       return count
     end
     if block_given?
@@ -126,9 +123,7 @@ module Enumerable
     return to_enum(:my_inject) unless block_given?
 
     my_each { |value| results = results.send symbol, value } unless symbol.nil?
-    (0...length).each do |i|
-      results = yield(results, self[i])
-    end
+    my_each { |i| results = yield(results, self[i]) }
     results
   end
 
