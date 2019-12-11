@@ -42,6 +42,7 @@ module Enumerable
     true
   end
 
+  # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_all?(arg = nil)
     if block_given?
       my_each { |x| return false unless yield(x) }
@@ -80,12 +81,13 @@ module Enumerable
     elsif arg.class == Regexp
       my_each { |w| return false if w.match? arg }
     elsif !arg.nil?
-      my_each { |w| return false if w == arg}
+      my_each { |w| return false if w == arg }
     else
       my_each { |w| return false if w }
     end
     true
   end
+  # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
   def my_count(arg = nil)
     unless arg.nil?
