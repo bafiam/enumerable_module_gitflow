@@ -121,13 +121,31 @@ module Enumerable
     new_arr
   end
 
-  def my_inject(results = 0, symbol = nil)
-    return to_enum(:my_inject) unless block_given?
-
-    my_each { |value| results = results.send symbol, value } unless symbol.nil?
-    my_each { |i| results = yield(results, self[i]) }
-    results
+  # rubocop:disable Metrics/PerceivedComplexity
+  def my_inject(results = nil, symb = nil)
+    new_arr = Array(self)
+    if block_given?
+      result = results
+      if results.nil?
+        result = self[0]
+        new_arr = new_arr[1..-1]
+        new_arr.my_each { |w| result = yield(result, w) }
+        result
+      elsif !results.nil?
+        new_arr.my_each { |i| results = yield(results, i) }
+        results
+      end
+    elsif results.class == Symbol
+      result = self[0]
+      new_arr = new_arr[1..-1]
+      new_arr.my_each { |t| result = result.send(results, t) }
+      result
+    elsif symb.class == Symbol
+      new_arr.my_each { |v| results = results.send(symb, v) }
+      results
+    end
   end
+  # rubocop:enable Metrics/PerceivedComplexity
 
   def multiply_els(results = 1)
     my_inject(results) { |result, num| result * num }
