@@ -13,7 +13,7 @@ In this project, you will implement Enumerable module that gets mixed into the A
 
 ## Run the server
 
-1. Next is to start the project with the command `ruby enumerable.rb`
+1. Next is to start the project with the command `ruby enumerable.rb`or `ruby test.rb`
 2. The page should be running on your terminal
 
 ## Built With
